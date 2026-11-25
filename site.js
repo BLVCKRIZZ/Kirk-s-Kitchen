@@ -139,6 +139,38 @@
     render();
   }
 
+  function setupNavigation() {
+    var toggle = document.querySelector(".nav-toggle");
+    var nav = document.getElementById("primary-navigation");
+    if (!toggle || !nav) return;
+
+    document.documentElement.classList.add("js");
+    function setOpen(open) {
+      nav.classList.toggle("open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    }
+
+    toggle.addEventListener("click", function () {
+      setOpen(toggle.getAttribute("aria-expanded") !== "true");
+    });
+    nav.addEventListener("click", function (event) {
+      if (event.target.closest("a")) setOpen(false);
+    });
+    document.addEventListener("click", function (event) {
+      if (!nav.contains(event.target) && !toggle.contains(event.target)) setOpen(false);
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 700) setOpen(false);
+    });
+  }
+
   document.addEventListener("click", function (event) {
     var button = event.target.closest("[data-id]");
     if (button) change(button.dataset.id, Number(button.dataset.d));
@@ -191,5 +223,6 @@
     });
   }
 
+  setupNavigation();
   render();
 })();

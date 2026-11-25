@@ -15,7 +15,8 @@
 <body>
   <header><div class="wrap">
     <a class="brand" href="index.html"><img src="logo.png" alt=""><span>Kirk’s Kitchen</span></a>
-    <nav aria-label="Main"><a href="index.html">Home</a><a href="products.html">Products</a><a href="about.html" aria-current="page">About</a><a href="contact.html">Contact</a><a class="cartlink" href="cart.html">Cart (<span data-cart-count>0</span>)</a></nav>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open menu"><span></span><span></span><span></span></button>
+    <nav id="primary-navigation" aria-label="Main"><a href="index.html">Home</a><a href="products.html">Products</a><a href="about.html" aria-current="page">About</a><a href="contact.html">Contact</a><a class="cartlink" href="cart.html">Cart (<span data-cart-count>0</span>)</a></nav>
   </div></header>
   <p id="site-error" class="err site-error wrap" role="alert" hidden></p>
   <main>
