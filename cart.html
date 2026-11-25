@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="logo.png">
+  <meta name="description" content="Review your Kirk’s Kitchen order and choose a pickup time.">
+  <title>Your Cart – Kirk’s Kitchen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bevan&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css">
+  <script src="site.js" defer></script>
+</head>
+<body>
+  <header><div class="wrap">
+    <a class="brand" href="index.html"><img src="logo.png" alt=""><span>Kirk’s Kitchen</span></a>
+    <nav aria-label="Main"><a href="index.html">Home</a><a href="products.html">Products</a><a href="about.html">About</a><a href="contact.html">Contact</a><a class="cartlink" href="cart.html" aria-current="page">Cart (<span data-cart-count>0</span>)</a></nav>
+  </div></header>
+  <p id="site-error" class="err site-error wrap" role="alert" hidden></p>
+  <main>
+    <section><div class="wrap">
+      <h1>Your Order</h1>
+      <div class="panel">
+        <p id="empty">Your cart is empty. <a href="products.html">Browse products</a> to get started.</p>
+        <div id="filled" hidden>
+          <ul class="lines" id="lines"></ul>
+          <div class="total"><span>Total</span><span id="total"></span></div>
+          <label for="name">Your name</label><input id="name" autocomplete="name">
+          <label for="phone">Phone number</label><input id="phone" type="tel" autocomplete="tel">
+          <label for="time">Pickup time</label><input id="time" placeholder="For example, 6:30 pm">
+          <label for="notes">Notes (optional)</label><textarea id="notes" rows="2" placeholder="No onions, extra sauce…"></textarea>
+          <p class="err" id="err" role="alert"></p>
+          <button class="btn" id="place" type="button">Place pre-order</button>
+        </div>
+        <div class="done" id="done">
+          <strong>Almost done. Send this order on WhatsApp.</strong>
+          <textarea id="msg" readonly aria-label="Your order message"></textarea>
+          <div class="row">
+            <a class="btn" id="wa" href="https://wa.me/27817310083" target="_blank" rel="noopener">Open WhatsApp</a>
+            <button class="btn ghost" id="copy" type="button">Copy order</button>
+          </div>
+          <p style="color:var(--dim);margin:12px 0 0">Review the pre-filled order in WhatsApp and send it. We’ll confirm your pickup time.</p>
+        </div>
+      </div>
+    </div></section>
+  </main>
+  <footer><div class="wrap">
+    <div class="row"><a class="btn ghost" href="https://www.instagram.com/kirk.skitchen" target="_blank" rel="noopener">Instagram</a><a class="btn ghost" href="https://wa.me/27817310083" target="_blank" rel="noopener">WhatsApp</a></div>
+    <div>© 2025 Kirk’s Kitchen Food Truck</div>
+  </div></footer>
+  <a class="bar" id="bar" href="cart.html"><span id="barcount"></span><span id="bartotal"></span></a>
+</body>
+</html>
