@@ -4,7 +4,7 @@
   var WA = "https://wa.me/27817310083";
   var STORAGE_KEY = "kirks-kitchen-cart";
   var MENU = [
-    { cat: "Burgers", items: [
+    { cat: "Burgers", addOn: { id: "chips", name: "Chips", price: 35 }, items: [
       { id: "classic", name: "Single Cheese Burger", desc: "Single patty with cheese.", price: 80 },
       { id: "double", name: "Double Cheese Burger", desc: "Two patties with cheese.", price: 120 },
       { id: "bacon", name: "Single Artisan Burger", desc: "150g patty with guac, bacon and jalapeño.", price: 120 },
@@ -18,6 +18,16 @@
   var all = {};
   MENU.forEach(function (category) {
     category.items.forEach(function (item) { all[item.id] = item; });
+    if (category.addOn) {
+      category.items.forEach(function (item) {
+        var variantId = item.id + "-" + category.addOn.id;
+        all[variantId] = {
+          id: variantId,
+          name: item.name + " with " + category.addOn.name.toLowerCase(),
+          price: item.price + category.addOn.price
+        };
+      });
+    }
   });
 
   function reportStorageError(message, error) {
@@ -54,6 +64,7 @@
   }
 
   var cart = loadCart();
+  var selectedAddOns = {};
 
   function price(amount) {
     return "R" + amount.toFixed(2).replace(/\.00$/, "");
@@ -69,9 +80,10 @@
 
   function controls(id) {
     var quantity = cart[id] || 0;
-    if (!quantity) return '<button class="btn add" type="button" data-id="' + id + '" data-d="1">Add</button>';
-    return '<div class="qty"><button type="button" aria-label="Remove one" data-id="' + id + '" data-d="-1">−</button><output>' +
-      quantity + '</output><button type="button" aria-label="Add one" data-id="' + id + '" data-d="1">+</button></div>';
+    var item = all[id];
+    if (!quantity) return '<button class="btn add" type="button" aria-label="Add ' + item.name + '" data-id="' + id + '" data-d="1">Add</button>';
+    return '<div class="qty"><button type="button" aria-label="Remove one ' + item.name + '" data-id="' + id + '" data-d="-1">−</button><output>' +
+      quantity + '</output><button type="button" aria-label="Add one ' + item.name + '" data-id="' + id + '" data-d="1">+</button></div>';
   }
 
   function renderProducts() {
@@ -81,9 +93,25 @@
     MENU.forEach(function (category) {
       html += '<div class="cat">' + category.cat + "</div>";
       category.items.forEach(function (item) {
-        html += '<div class="item"><h3>' + item.name + "</h3><p>" + item.desc +
-          '</p><div class="act"><span class="price">' + price(item.price) +
-          '</span><div data-controls="' + item.id + '">' + controls(item.id) + "</div></div></div>";
+        var actions;
+        var itemClass = "item";
+        if (category.addOn) {
+          var variantId = item.id + "-" + category.addOn.id;
+          var selectedVariantId = selectedAddOns[item.id] ? variantId : item.id;
+          var checked = selectedAddOns[item.id] ? " checked" : "";
+          var selectedClass = selectedAddOns[item.id] ? " selected" : "";
+          itemClass += " item-with-options";
+          actions = '<div class="act burger-actions"><span class="price">' + price(item.price) +
+            '</span><label class="addon-option' + selectedClass + '"><input type="checkbox" data-addon-for="' + item.id + '" data-addon-id="' +
+            category.addOn.id + '"' + checked +
+            '><span>Add chips (+' + price(category.addOn.price) + ')</span></label><div data-variant-controls data-controls="' +
+            selectedVariantId + '">' + controls(selectedVariantId) + "</div></div>";
+        } else {
+          actions = '<div class="act"><span class="price">' + price(item.price) +
+            '</span><div data-controls="' + item.id + '">' + controls(item.id) + "</div></div>";
+        }
+        html += '<div class="' + itemClass + '"><h3>' + item.name + "</h3><p>" + item.desc +
+          "</p>" + actions + "</div>";
       });
     });
     list.innerHTML = html;
@@ -191,6 +219,18 @@
   document.addEventListener("click", function (event) {
     var button = event.target.closest("[data-id]");
     if (button) change(button.dataset.id, Number(button.dataset.d));
+  });
+
+  document.addEventListener("change", function (event) {
+    var checkbox = event.target.closest("[data-addon-for]");
+    if (!checkbox) return;
+    var itemId = checkbox.dataset.addonFor;
+    selectedAddOns[itemId] = checkbox.checked;
+    checkbox.closest(".addon-option").classList.toggle("selected", checkbox.checked);
+    var variantId = checkbox.checked ? itemId + "-" + checkbox.dataset.addonId : itemId;
+    var control = checkbox.closest(".item").querySelector("[data-variant-controls]");
+    control.dataset.controls = variantId;
+    control.innerHTML = controls(variantId);
   });
 
   var placeButton = document.getElementById("place");
